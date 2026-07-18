@@ -1,8 +1,10 @@
 idf_component_register(SRCS "tasks/tasks/leds/task_led.c" 
                             "tasks/tasks/sensors/reed/task_reed.c"
                             "system/system_state.c"
+                            "tasks/tasks/alarm/task_alarm.c"
                             "main.c"
                     INCLUDE_DIRS "."
                                 "tasks/tasks/leds"
                                 "tasks/tasks/sensors/reed"
+                                "tasks/tasks/alarm"
                                 "system")
