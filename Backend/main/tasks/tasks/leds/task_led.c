@@ -57,20 +57,20 @@ static void led_test_task(void *pvParameters)
     gpio_set_level(LED_GPIO_WHITE, 1);
     gpio_set_level(LED_GPIO_RED, 0);
     gpio_set_level(LED_GPIO_GREEN, 0);
-    printf("capac deschis\n");
+  //  printf("capac deschis\n");
   }
   else if(g_system_state.lid_open==1 && g_system_state.lens_case_present==1){
     gpio_set_level(LED_GPIO_GREEN, 1);
     gpio_set_level(LED_GPIO_RED, 0);
     gpio_set_level(LED_GPIO_WHITE, 0);
-    printf("capac inchis, cutie inauntru\n");
+   // printf("capac inchis, cutie inauntru\n");
 
   }
   else if(g_system_state.lid_open==1 && g_system_state.lens_case_present==0){
     gpio_set_level(LED_GPIO_RED, 1);
     gpio_set_level(LED_GPIO_GREEN, 0);
     gpio_set_level(LED_GPIO_WHITE, 0);
-    printf("capac inchis, cutie absenta\n");
+   // printf("capac inchis, cutie absenta\n");
   }
    vTaskDelay(pdMS_TO_TICKS(50));
         }
