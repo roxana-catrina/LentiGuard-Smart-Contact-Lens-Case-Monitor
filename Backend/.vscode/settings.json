@@ -16,6 +16,7 @@
     "--query-driver=**",
     "--compile-commands-dir=c:\\Users\\roxan\\Desktop\\Proiect lentile\\ESP32\\Backend\\build"
   ],
-  "idf.flashType": "UART"
+  "idf.flashType": "UART",
+  "C_Cpp.errorSquiggles": "enabled"
   
 }

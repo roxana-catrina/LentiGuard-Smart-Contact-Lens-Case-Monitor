@@ -5,9 +5,10 @@
 #include "driver/gpio.h"
 #include "system_state.h"
 #include "task_reed.h"
-
+#include "events/event.h"
+#include "communication/http_client/http_client.h"
 #define REED_GPIO GPIO_NUM_32
-
+#define DEVICE_ID 1
 
 void reed_gpio_init(void)
 {
@@ -48,14 +49,17 @@ printf("lens_case_present = %d\n", state.lens_case_present);
         bool current_state_lens_case = gpio_get_level(GPIO_NUM_33);
        system_state_set_lid_open(current_state == 0);
         system_state_set_lens_case_present(current_state_lens_case == 0);
+         event_t event;
+         event.device_id = DEVICE_ID;
         if (current_state != previous_state)
         {
-           /* if (current_state == 0)
-                printf("inchis\n");
+            if (current_state == 0)
+                event.event_type = LID_CLOSED;
             else
-                printf("deschis\n");*/
+                event.event_type = LID_OPENED;
 
             previous_state = current_state;
+            http_client_send_event(&event);
         }
 
         if(current_state_lens_case != previous_state_lens_case)

@@ -53,10 +53,10 @@ void wifi_init(void)
     nvs_flash_init();
 
 
-    esp_netif_init();
+    esp_netif_init();//pregătește stiva TCP/IP și mecanismele necesare 
 
 
-    esp_event_loop_create_default();
+    esp_event_loop_create_default(); // pt ca handler sa primeasca evenimnete
 
 
     esp_netif_create_default_wifi_sta();
@@ -67,7 +67,7 @@ void wifi_init(void)
         WIFI_INIT_CONFIG_DEFAULT();
 
 
-    esp_wifi_init(&wifi_config);
+    esp_wifi_init(&wifi_config); // initiere driver wifi cu configuratia implicita
 
 
 
@@ -90,7 +90,7 @@ void wifi_init(void)
 
 
 
-    esp_event_handler_register(
+    esp_event_handler_register( //orice eveniment ex: start, stop, disconnect etc
         WIFI_EVENT,
         ESP_EVENT_ANY_ID,
         wifi_event_handler,
