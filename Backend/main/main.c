@@ -8,10 +8,15 @@
 #include "tasks/tasks/alarm/task_alarm.h"
 #include "tasks/tasks/sensors/button/task_button.h"
 #include "system/alarm_queue/alarm_queue.h"
+#include "system/system_state.h"
+#include "wifi/wifi.h"
 
 
 void app_main(void)
-{
+{     
+     system_state_init();
+      wifi_init();
+
     alarm_queue_init();
 
    reed_gpio_init();

@@ -4,11 +4,16 @@ idf_component_register(SRCS "tasks/tasks/leds/task_led.c"
                             "tasks/tasks/alarm/task_alarm.c"
                             "tasks/tasks/sensors/button/task_button.c"
                             "system/alarm_queue/alarm_queue.c"
+                            "wifi/wifi.c"
+                            "http_server/http_server.c"
                             "main.c"
+
                     INCLUDE_DIRS "."
                                 "tasks/tasks/leds"
                                 "tasks/tasks/sensors/reed"
                                 "tasks/tasks/sensors/button"
                                 "tasks/tasks/alarm"
                                 "system/alarm_queue"
-                                "system")
+                                "wifi"
+                                "system"
+                                "http_server")

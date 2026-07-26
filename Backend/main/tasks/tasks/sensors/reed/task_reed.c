@@ -24,11 +24,15 @@ void reed_gpio_init(void)
 }
 
 static void reed_task(void *pvParameters)
-{
+{  system_state_t state;
+
+state = system_state_get();
+printf("lid_open = %d\n", state.lid_open);
+printf("lens_case_present = %d\n", state.lens_case_present);
     bool previous_state = gpio_get_level(GPIO_NUM_32);
     bool previous_state_lens_case = gpio_get_level(GPIO_NUM_33);
-    g_system_state.lid_open = (previous_state == 0);
-    g_system_state.lens_case_present = (previous_state_lens_case == 0);
+   state.lid_open = (previous_state == 0);
+    state.lens_case_present = (previous_state_lens_case == 0);
    /* if (previous_state == 0)
         printf("previous_state = %d inchis\n", previous_state);
     else
@@ -42,8 +46,8 @@ static void reed_task(void *pvParameters)
     {
         bool current_state = gpio_get_level(GPIO_NUM_32);
         bool current_state_lens_case = gpio_get_level(GPIO_NUM_33);
-        g_system_state.lid_open = (current_state == 0);
-        g_system_state.lens_case_present = (current_state_lens_case == 0);
+       system_state_set_lid_open(current_state == 0);
+        system_state_set_lens_case_present(current_state_lens_case == 0);
         if (current_state != previous_state)
         {
            /* if (current_state == 0)

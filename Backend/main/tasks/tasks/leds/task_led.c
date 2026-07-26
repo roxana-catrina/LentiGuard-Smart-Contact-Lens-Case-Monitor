@@ -53,20 +53,21 @@ static void led_test_task(void *pvParameters)
 
         printf("Stack minim ramas pentru led_test_task: %u bytes\n",(unsigned int)stack_ramasa);  
    */ 
-  if(g_system_state.lid_open==0){
+  system_state_t state = system_state_get();
+  if(state.lid_open==0){
     gpio_set_level(LED_GPIO_WHITE, 1);
     gpio_set_level(LED_GPIO_RED, 0);
     gpio_set_level(LED_GPIO_GREEN, 0);
   //  printf("capac deschis\n");
   }
-  else if(g_system_state.lid_open==1 && g_system_state.lens_case_present==1){
+  else if(state.lid_open==1 && state.lens_case_present==1){
     gpio_set_level(LED_GPIO_GREEN, 1);
     gpio_set_level(LED_GPIO_RED, 0);
     gpio_set_level(LED_GPIO_WHITE, 0);
    // printf("capac inchis, cutie inauntru\n");
 
   }
-  else if(g_system_state.lid_open==1 && g_system_state.lens_case_present==0){
+  else if(state.lid_open==1 && state.lens_case_present==0){
     gpio_set_level(LED_GPIO_RED, 1);
     gpio_set_level(LED_GPIO_GREEN, 0);
     gpio_set_level(LED_GPIO_WHITE, 0);
@@ -79,17 +80,17 @@ static void led_test_task(void *pvParameters)
 
 void led_task_start(void)
 {
-    // Resetează configurația anterioară
+   
     gpio_reset_pin(LED_GPIO_GREEN);
     gpio_reset_pin(LED_GPIO_RED);
     gpio_reset_pin(LED_GPIO_WHITE);
 
-    // Configurează pinii ca ieșiri
+   
     gpio_set_direction(LED_GPIO_GREEN, GPIO_MODE_OUTPUT);
     gpio_set_direction(LED_GPIO_RED, GPIO_MODE_OUTPUT);
     gpio_set_direction(LED_GPIO_WHITE, GPIO_MODE_OUTPUT);
 
-    // Starea inițială: toate LED-urile stinse
+    
     gpio_set_level(LED_GPIO_GREEN, 0);
     gpio_set_level(LED_GPIO_RED, 0);
     gpio_set_level(LED_GPIO_WHITE, 0);
