@@ -6,7 +6,8 @@
 #include "system_state.h"
 #include "system/alarm_queue/alarm_queue.h"
 #define BUZZER_GPIO GPIO_NUM_23
-
+#include "events/event.h"
+#include "communication/http_client/http_client.h"
 
 void buzzer_gpio_init(void)
 {
@@ -30,18 +31,26 @@ void buzzer_gpio_init(void)
 static void buzzer_task(void *pvParameters)
 {
     alarm_command_t command;
+    event_t event;
+    event.device_id = 1; 
+    command= ALARM_START;
 
     while (1)
     {
         if (xQueueReceive(alarm_queue, &command, portMAX_DELAY) == pdTRUE)
         {
+               printf("Command received: %d\n", command);
             if (command == ALARM_START)
-            {
+            {     printf("Command received: %d\n", command);
                 gpio_set_level(BUZZER_GPIO, 1);
+                event.event_type = ALARM_STARTED;
+                http_client_send_alarm_event(&event);
             }
             else if (command == ALARM_STOP)
-            {
+            {   printf("ALARM_STOP\n");
                 gpio_set_level(BUZZER_GPIO, 0);
+                event.event_type = ALARM_STOPPED_DEVICE;
+                http_client_send_alarm_event(&event);
             }
         }
     }

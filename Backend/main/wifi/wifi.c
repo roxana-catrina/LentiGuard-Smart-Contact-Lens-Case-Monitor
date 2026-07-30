@@ -7,7 +7,8 @@
 #include "esp_netif.h"
 #include "http_server.h"
 #include <stdio.h>
-
+#include "system_state.h"
+#include "communication/http_client/http_client.h"
 
 static const char *TAG = "WIFI";
 
@@ -43,6 +44,7 @@ static void wifi_event_handler(void *arg,
         printf("IP primit: " IPSTR "\n",
        IP2STR(&event->ip_info.ip));
         http_server_start();
+         http_client_send_status();
     }
 }
 

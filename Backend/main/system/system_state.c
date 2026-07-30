@@ -15,9 +15,10 @@ void system_state_init(void)
 
     system_state.alarm_active = false;
 
-    system_state.camera_recording = false;
+   // system_state.camera_recording = false;
 
     system_state.wifi_connected = false;
+     system_state.battery_level = 100; 
 }
 
 

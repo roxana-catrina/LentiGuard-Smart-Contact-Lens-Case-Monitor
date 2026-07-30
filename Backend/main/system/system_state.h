@@ -1,5 +1,6 @@
 
 #include <stdbool.h>
+#include <stdint.h>
 typedef struct
 {
     bool lid_open;
@@ -8,9 +9,9 @@ typedef struct
 
     bool alarm_active;
 
-    bool camera_recording;
 
     bool wifi_connected;
+    uint8_t battery_level ;
 
 } system_state_t;
 

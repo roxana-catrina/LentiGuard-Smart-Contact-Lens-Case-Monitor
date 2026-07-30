@@ -10,6 +10,7 @@
 #include "system/alarm_queue/alarm_queue.h"
 #include "system/system_state.h"
 #include "wifi/wifi.h"
+#include "communication/http_client/http_client.h"
 
 
 void app_main(void)
@@ -26,6 +27,8 @@ void app_main(void)
      reed_task_start();
     buzzer_task_start();
     button_buzzer_task_start();
+
+   
 
      
 }
