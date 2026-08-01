@@ -31,7 +31,7 @@ static void wifi_event_handler(void *arg,
              event_id == WIFI_EVENT_STA_DISCONNECTED)
     {
         printf("WiFi disconnected\n");
-
+        system_state_set_wifi_connected(false);
         esp_wifi_connect();
     }
 
@@ -43,6 +43,7 @@ static void wifi_event_handler(void *arg,
 
         printf("IP primit: " IPSTR "\n",
        IP2STR(&event->ip_info.ip));
+       system_state_set_wifi_connected(true);
         http_server_start();
          http_client_send_status();
     }
