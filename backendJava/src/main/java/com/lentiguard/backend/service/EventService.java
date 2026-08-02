@@ -4,6 +4,8 @@ import com.lentiguard.backend.entity.Event;
 import com.lentiguard.backend.repository.EventRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EventService {
 
@@ -16,5 +18,9 @@ public class EventService {
 
     public void saveEvent(Event event) {
         eventRepository.save(event);
+    }
+
+    public List<Event> getAllEvents() {
+        return eventRepository.findAll();
     }
 }

@@ -4,6 +4,8 @@ import com.lentiguard.backend.entity.Status;
 import com.lentiguard.backend.repository.StatusRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class StatusService {
 
@@ -16,4 +18,8 @@ public class StatusService {
     public void saveStatus(Status status) {
         statusRepository.save(status);
     }
+    public Optional<Status> getLatestStatus() {
+        return statusRepository.findTopByOrderByCreatedAtDesc();
+    }
+
 }

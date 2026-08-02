@@ -4,12 +4,10 @@ import com.lentiguard.backend.dto.EventRequest;
 
 import com.lentiguard.backend.entity.Event;
 import com.lentiguard.backend.service.EventService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -41,5 +39,8 @@ public class EventController {
         return "Event saved";
 
     }
-
+    @GetMapping("/events")
+    public List<Event> getAllEvents() {
+        return eventService.getAllEvents();
+    }
 }

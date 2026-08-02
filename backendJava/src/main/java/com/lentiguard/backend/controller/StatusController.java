@@ -4,10 +4,7 @@ import com.lentiguard.backend.dto.EventRequest;
 import com.lentiguard.backend.dto.StatusRequest;
 import com.lentiguard.backend.entity.Status;
 import com.lentiguard.backend.service.StatusService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
@@ -47,5 +44,12 @@ public class StatusController {
         statusService.saveStatus(status);
 
         return "Status saved";
+    }
+    @GetMapping("/status")
+    public Status getLatestStatus() {
+
+        return statusService
+                .getLatestStatus()
+                .orElse(null);
     }
 }

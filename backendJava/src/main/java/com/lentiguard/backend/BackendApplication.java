@@ -13,9 +13,6 @@ public class BackendApplication {
 		SpringApplication.run(BackendApplication.class, args);
 	}
 
-    @Bean
-    CommandLineRunner test(@Value("${DB_HOST:NOT_FOUND}") String host) {
-        return args -> System.out.println("DB_HOST = " + host);
-    }
+
 
 }
