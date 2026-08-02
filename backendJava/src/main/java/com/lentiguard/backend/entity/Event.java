@@ -1,5 +1,6 @@
 package com.lentiguard.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -11,16 +12,18 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private Integer deviceId;
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "device_id")
+    private Device device;
 
     private String eventType;
 
     private LocalDateTime createdAt;
 
-    public Event(Long id, Integer deviceId, String eventType, LocalDateTime createdAt) {
+    public Event(Long id, Device device, String eventType, LocalDateTime createdAt) {
         this.id = id;
-        this.deviceId = deviceId;
+        this.device = device;
         this.eventType = eventType;
         this.createdAt = createdAt;
     }
@@ -29,8 +32,8 @@ public class Event {
         return id;
     }
 
-    public Integer getDeviceId() {
-        return deviceId;
+    public Device getDevice() {
+        return device;
     }
 
     public String getEventType() {
@@ -45,8 +48,8 @@ public class Event {
         this.id = id;
     }
 
-    public void setDeviceId(Integer deviceId) {
-        this.deviceId = deviceId;
+    public void setDevice(Device device) {
+        this.device = device;
     }
 
     public void setEventType(String eventType) {
