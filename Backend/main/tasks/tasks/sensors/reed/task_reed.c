@@ -64,11 +64,11 @@ printf("lens_case_present = %d\n", state.lens_case_present);
 
         if(current_state_lens_case != previous_state_lens_case)
         {
-           /* if (current_state_lens_case == 0)
-                printf("cutie inauntru\n");
+           if (current_state_lens_case == 0)
+                  event.event_type = LENS_CASE_INSERTED;
             else
-                printf("cutie absenta\n");*/
-
+                event.event_type = LENS_CASE_REMOVED;
+              http_client_send_event(&event);
             previous_state_lens_case = current_state_lens_case;
         }
 

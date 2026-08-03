@@ -35,18 +35,13 @@ public class EventController {
     @PostMapping("/events")
     public String receiveEvent(@RequestBody EventRequest request) {
 
-        Device device = deviceRepository
-                .findById((long) request.getDeviceId())
-                .orElseThrow(() -> new RuntimeException("Device not found"));
-
-        Event event = new Event();
-
-        event.setDevice(device);
-        event.setEventType(request.getEvent());
-        event.setCreatedAt(LocalDateTime.now());
-
-        eventService.saveEvent(event);
+        eventService.processEvent(request);
 
         return "Event saved";
+    }
+
+    @GetMapping
+    public List<Event> getAllEvents() {
+        return eventService.getAllEvents();
     }
 }

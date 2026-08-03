@@ -9,4 +9,6 @@ public interface StatusRepository extends JpaRepository<Status, Long> {
 
 
     Optional<Status> findTopByOrderByCreatedAtDesc();
+    Optional<Status> findTopByDeviceIdOrderByCreatedAtDesc(Integer deviceId);
+
 }
