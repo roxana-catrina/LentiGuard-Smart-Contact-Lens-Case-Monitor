@@ -1,3 +1,4 @@
+import { connectWebSocket } from "@/services/websocket";
 import { useEffect, useState } from "react";
 import { ScrollView, Text } from "react-native";
 import AlarmCard from "../components/AlarmCard";
@@ -8,6 +9,7 @@ import LidCard from "../components/LidCard";
 import WifiCard from "../components/WifiCard";
 import { getDashboard } from "../services/api";
 import { DashboardEvent } from "../types/Dashboard";
+
 export default function HomeScreen() {
   const [batteryLevel, setBatteryLevel] = useState(100);
   const [lidOpen, setLidOpen] = useState(false);
@@ -16,28 +18,49 @@ export default function HomeScreen() {
   const [wifiConnected, setWifiConnected] = useState(true);
   const [events, setEvents] = useState<DashboardEvent[]>([]);
 
-
 useEffect(() => {
   console.log("USE EFFECT STARTED");
 
   getDashboard(1)
-  .then((data) => {
-     console.log("DASHBOARD DATA:", data);
-      console.log("EVENTS:", data.lastEvents);
-
-    setBatteryLevel(data.batteryLevel);
-    setLidOpen(data.lidOpen);
-    setLensCasePresent(data.lensCasePresent);
-    setAlarmActive(data.alarmActive);
-    setWifiConnected(data.wifiConnected);
-    setEvents(data.lastEvents);
-  })
-  .catch((error) => {
-    console.error("DASHBOARD ERROR:", error);
-  });
+    .then((data) => {
+      setBatteryLevel(data.batteryLevel);
+      setLidOpen(data.lidOpen);
+      setLensCasePresent(data.lensCasePresent);
+      setAlarmActive(data.alarmActive);
+      setWifiConnected(data.wifiConnected);
+      setEvents(data.lastEvents);
+    })
+    .catch((error) => {
+      console.error("DASHBOARD ERROR:", error);
+    });
 }, []);
 
+useEffect(() => {
+  console.log("WEBSOCKET EFFECT STARTED");
 
+  const client = connectWebSocket(1, (message) => {
+    console.log("MESSAGE FROM WEBSOCKET:", message);
+  });
+
+  console.log("WEBSOCKET CLIENT CREATED");
+
+  return () => {
+    console.log("WEBSOCKET CLEANUP");
+    //client.deactivate();
+  };
+  
+}, []);
+/*
+useEffect(() => {
+  console.log("RAW TEST STARTED");
+
+  const ws = testWebSocket();
+
+  return () => {
+    ws.close();
+  };
+}, []);
+*/
   return (
   <ScrollView
   style={{
