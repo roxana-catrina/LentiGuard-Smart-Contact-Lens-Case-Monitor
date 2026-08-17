@@ -38,9 +38,33 @@ useEffect(() => {
 useEffect(() => {
   console.log("WEBSOCKET EFFECT STARTED");
 
-  const client = connectWebSocket(1, (message) => {
-    console.log("MESSAGE FROM WEBSOCKET:", message);
-  });
+ const client = connectWebSocket(1, (message) => {
+  console.log("MESSAGE FROM WEBSOCKET:", message);
+
+  if (message === "LID_OPENED") {
+    setLidOpen(true);
+  }
+
+  if (message === "LID_CLOSED") {
+    setLidOpen(false);
+  }
+
+  if (message === "LENS_CASE_INSERTED") {
+    setLensCasePresent(true);
+  }
+
+  if (message === "LENS_CASE_REMOVED") {
+    setLensCasePresent(false);
+  }
+  setEvents((prevEvents) => [
+  {
+    id: Date.now(),
+    eventType: message,
+    createdAt: new Date().toISOString(),
+  },
+  ...prevEvents,
+].slice(0, 10));
+});
 
   console.log("WEBSOCKET CLIENT CREATED");
 

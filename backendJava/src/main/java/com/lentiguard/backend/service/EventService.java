@@ -52,7 +52,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
             eventRepository.save(event);
             messagingTemplate.convertAndSend(
                     "/topic/device/" + request.getDeviceId(),
-                    "Event received: " + request.getEvent()
+                    request.getEvent()
             );
         }
     }
