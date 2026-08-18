@@ -44,6 +44,8 @@ static void wifi_event_handler(void *arg,
         printf("IP primit: " IPSTR "\n",
        IP2STR(&event->ip_info.ip));
        system_state_set_wifi_connected(true);
+       system_state_t state = system_state_get();
+       printf("WIFI STATE AFTER GOT IP: %d\n", state.wifi_connected);
         http_server_start();
          http_client_send_status();
     }
@@ -111,4 +113,7 @@ void wifi_init(void)
 
 
     esp_wifi_start();
+    event_t event;
+
+
 }

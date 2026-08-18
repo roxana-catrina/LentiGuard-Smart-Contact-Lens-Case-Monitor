@@ -23,7 +23,7 @@ printf("Sending event: %s\n", json);
 
 esp_http_client_config_t config =
 {
-    .url = "http://192.168.1.129:8080/api/events"
+    .url = "http://192.168.1.128:8080/api/events"
 };
 
 esp_http_client_handle_t client =
@@ -82,12 +82,12 @@ printf("Sending event: %s\n", json);
 
 esp_http_client_config_t config =
 {
-    .url = "http://192.168.1.129:8080/api/alarm/events"
+    .url = "http://192.168.1.128:8080/api/alarm/events"
 };
 
 esp_http_client_handle_t client =
     esp_http_client_init(&config);
-
+printf("HTTP CLIENT CREATED\n");
 esp_http_client_set_method(
     client,
     HTTP_METHOD_POST
@@ -116,7 +116,7 @@ else
 {
     printf("Eroare la trimitere: %s\n", esp_err_to_name(err));
 }
-
+printf("HTTP CLIENT CLEANUP\n");
 esp_http_client_cleanup(client);
 }
 
@@ -147,12 +147,12 @@ snprintf(
 
 esp_http_client_config_t config =
 {
-    .url = "http://192.168.1.129:8080/api/status"
+    .url = "http://192.168.1.128:8080/api/status"
 };
 
 esp_http_client_handle_t client =
     esp_http_client_init(&config);
-
+printf("HTTP CLIENT CREATED\n");
 esp_http_client_set_method(
     client,
     HTTP_METHOD_POST
@@ -181,6 +181,6 @@ else
 {
     printf("Eroare la trimitere: %s\n", esp_err_to_name(err));
 }
-
+printf("HTTP CLIENT CLEANUP\n");
 esp_http_client_cleanup(client);
 }

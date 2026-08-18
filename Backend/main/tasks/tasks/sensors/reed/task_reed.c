@@ -34,15 +34,7 @@ printf("lens_case_present = %d\n", state.lens_case_present);
     bool previous_state_lens_case = gpio_get_level(GPIO_NUM_33);
    state.lid_open = (previous_state == 0);
     state.lens_case_present = (previous_state_lens_case == 0);
-   /* if (previous_state == 0)
-        printf("previous_state = %d inchis\n", previous_state);
-    else
-        printf("previous_state = %d deschis\n", previous_state);
-
-    if (previous_state_lens_case == 0)
-        printf("previous_state_lens_case = %d cutie inauntru\n", previous_state_lens_case);
-    else
-        printf("previous_state_lens_case = %d cutie absenta\n", previous_state_lens_case);*/
+   
     while (1)
     {
         bool current_state = gpio_get_level(GPIO_NUM_32);
@@ -59,7 +51,17 @@ printf("lens_case_present = %d\n", state.lens_case_present);
                 event.event_type = LID_OPENED;
 
             previous_state = current_state;
-            http_client_send_event(&event);
+            system_state_t state = system_state_get();
+
+printf("REED WIFI STATE: %d\n", state.wifi_connected);
+           if (state.wifi_connected)
+{
+    http_client_send_event(&event);
+}
+else
+{
+    printf("WiFi not connected - event not sent\n");
+}
         }
 
         if(current_state_lens_case != previous_state_lens_case)
@@ -68,7 +70,18 @@ printf("lens_case_present = %d\n", state.lens_case_present);
                   event.event_type = LENS_CASE_INSERTED;
             else
                 event.event_type = LENS_CASE_REMOVED;
-              http_client_send_event(&event);
+
+            system_state_t state = system_state_get();
+
+printf("REED WIFI STATE: %d\n", state.wifi_connected);
+             if (state.wifi_connected)
+{
+    http_client_send_event(&event);
+}
+else
+{
+    printf("WiFi not connected - event not sent\n");
+}
             previous_state_lens_case = current_state_lens_case;
         }
 

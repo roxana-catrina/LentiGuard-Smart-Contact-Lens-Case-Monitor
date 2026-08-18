@@ -23,13 +23,7 @@ public class EventController {
         this.eventService = eventService;
         this.deviceRepository = deviceRepository;
     }
-   /* @PostMapping("/events")
-    public void receiveEvent(@RequestBody EventRequest request) {
 
-        System.out.println("Device ID: " + request.getDeviceId());
-        System.out.println("Event: " + request.getEvent());
-
-    }*/
 
 
     @PostMapping("/events")
