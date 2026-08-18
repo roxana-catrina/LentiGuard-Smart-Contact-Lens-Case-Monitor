@@ -31,7 +31,7 @@ export default function LensCaseCard({
           marginTop: 10,
         }}
       >
-        {lensCasePresent ? "Present" : "Removed"}
+        {lensCasePresent ? "Removed" : "Present"}
       </Text>
     </View>
   );
