@@ -20,4 +20,6 @@ idf_component_register(SRCS "tasks/tasks/leds/task_led.c"
                                 "system"
                                 "communication/http_server"
                                 "communication/http_client"
-                                "events")
+                                "events"
+                
+)

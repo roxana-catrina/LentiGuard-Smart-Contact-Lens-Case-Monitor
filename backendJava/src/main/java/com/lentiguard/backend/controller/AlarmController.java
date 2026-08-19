@@ -19,13 +19,7 @@ public class AlarmController {
     public AlarmController(AlarmService alarmService) {
         this.alarmService = alarmService;
     }
-    /*@PostMapping("/events")
-    public void receiveAlarmEvent(@RequestBody EventRequest request)
-    {
-        System.out.println("Alarm Event");
-        System.out.println("Device ID: " + request.getDeviceId());
-        System.out.println("Event: " + request.getEvent());
-    }*/
+
 
 
     @PostMapping("/events")

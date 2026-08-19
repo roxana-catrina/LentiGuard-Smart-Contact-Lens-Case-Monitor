@@ -48,6 +48,27 @@ static void wifi_event_handler(void *arg,
        printf("WIFI STATE AFTER GOT IP: %d\n", state.wifi_connected);
         http_server_start();
          http_client_send_status();
+          // TEST ALARM
+    int hour;
+    int minute;
+    bool enabled;
+
+    if (http_client_get_alarm(
+            &hour,
+            &minute,
+            &enabled))
+    {
+        printf(
+            "ALARM FROM BACKEND: %02d:%02d enabled=%d\n",
+            hour,
+            minute,
+            enabled
+        );
+    }
+    else
+    {
+        printf("FAILED TO GET ALARM\n");
+    }
     }
 }
 

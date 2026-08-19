@@ -160,6 +160,7 @@
 		"C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/build/esp-idf/rt/cmake_install.cmake",
 		"C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/build/esp-idf/spiffs/cmake_install.cmake",
 		"C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/build/esp-idf/ulp/cmake_install.cmake",
+		"C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/build/esp-idf/espressif__cjson/cmake_install.cmake",
 		"C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/build/esp-idf/main/cmake_install.cmake"
 	],
 	"Parallel" : false

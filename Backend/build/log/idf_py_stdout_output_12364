@@ -1,0 +1,6 @@
+Command: cmake -G Ninja -B C:\Users\roxan\Desktop\Proiect lentile\ESP32\Backend\build -DPYTHON_DEPS_CHECKED=1 -DPYTHON=C:\Espressif\tools\python\v6.0.2\venv\Scripts\python.exe -DESP_PLATFORM=1 -DCCACHE_ENABLE=True C:\Users\roxan\Desktop\Proiect lentile\ESP32\Backend
+-- Component directory C:/esp/v6.0.2/esp-idf/components/mqtt does not contain a CMakeLists.txt file. No component will be added
+-- Minimal build - OFF
+-- ccache will be used for faster recompilation
+-- Building ESP-IDF components for target esp32
+-- Configuring incomplete, errors occurred!

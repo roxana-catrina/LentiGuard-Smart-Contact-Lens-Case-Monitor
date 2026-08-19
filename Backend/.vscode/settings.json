@@ -17,6 +17,6 @@
     "--compile-commands-dir=c:\\Users\\roxan\\Desktop\\Proiect lentile\\ESP32\\Backend\\build"
   ],
   "idf.flashType": "UART",
-  "C_Cpp.errorSquiggles": "enabled"
+  "C_Cpp.errorSquiggles": "disabled"
   
 }
