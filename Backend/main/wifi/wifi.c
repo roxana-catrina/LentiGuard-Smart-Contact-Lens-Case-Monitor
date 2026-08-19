@@ -6,11 +6,14 @@
 #include "nvs_flash.h"
 #include "esp_netif.h"
 #include "http_server.h"
+#include "ntp/ntp.h"
 #include <stdio.h>
 #include "system_state.h"
 #include "communication/http_client/http_client.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
-static const char *TAG = "WIFI";
+//static const char *TAG = "WIFI";
 
 
 static void wifi_event_handler(void *arg,
@@ -48,6 +51,10 @@ static void wifi_event_handler(void *arg,
        printf("WIFI STATE AFTER GOT IP: %d\n", state.wifi_connected);
         http_server_start();
          http_client_send_status();
+         ntp_init();
+         vTaskDelay(pdMS_TO_TICKS(3000));
+
+        ntp_print_current();
           // TEST ALARM
     int hour;
     int minute;

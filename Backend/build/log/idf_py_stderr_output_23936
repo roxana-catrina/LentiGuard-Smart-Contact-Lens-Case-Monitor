@@ -26,3 +26,18 @@ Configuration Report
 | | 'n'.                                                                    | |
 | +-------------------------------------------------------------------------+ |
 +-----------------------------------------------------------------------------+
+CMake Error at C:/esp/v6.0.2/esp-idf/tools/cmake/component.cmake:494 (add_library):
+  Cannot find source file:
+
+    C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/ntp/time.c
+Call Stack (most recent call first):
+  main/CMakeLists.txt:1 (idf_component_register)
+
+
+CMake Error at C:/esp/v6.0.2/esp-idf/tools/cmake/component.cmake:494 (add_library):
+  No SOURCES given to target: __idf_main
+Call Stack (most recent call first):
+  main/CMakeLists.txt:1 (idf_component_register)
+
+
+CMake Generate step failed.  Build files cannot be regenerated correctly.
