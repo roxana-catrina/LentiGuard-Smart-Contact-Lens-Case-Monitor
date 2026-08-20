@@ -8,6 +8,7 @@ idf_component_register(SRCS "tasks/tasks/leds/task_led.c"
                             "communication/http_server/http_server.c"
                             "communication/http_client/http_client.c"
                             "events/event.c"
+                            "tasks/tasks/alarm/alarm_scheduler.c"
                             "ntp/ntp.c"
                             "main.c"
 

@@ -1,7 +1,7 @@
 {
     "version":            "1.3",
     "project_name":       "Backend",
-    "project_version":    "214b88c-dirty",
+    "project_version":    "3500545-dirty",
     "project_path":       "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend",
     "idf_path":           "C:/esp/v6.0.2/esp-idf",
     "build_dir":          "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/build",
@@ -1780,7 +1780,7 @@
             "managed_reqs": [],
             "managed_priv_reqs": [ "espressif__cjson" ],
             "file": "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/build/esp-idf/main/libmain.a",
-            "sources": [ "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/tasks/tasks/leds/task_led.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/tasks/tasks/sensors/reed/task_reed.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/system/system_state.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/tasks/tasks/alarm/task_alarm.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/tasks/tasks/sensors/button/task_button.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/system/alarm_queue/alarm_queue.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/wifi/wifi.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/communication/http_server/http_server.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/communication/http_client/http_client.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/events/event.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/ntp/ntp.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/main.c" ],
+            "sources": [ "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/tasks/tasks/leds/task_led.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/tasks/tasks/sensors/reed/task_reed.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/system/system_state.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/tasks/tasks/alarm/task_alarm.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/tasks/tasks/sensors/button/task_button.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/system/alarm_queue/alarm_queue.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/wifi/wifi.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/communication/http_server/http_server.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/communication/http_client/http_client.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/events/event.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/tasks/tasks/alarm/alarm_scheduler.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/ntp/ntp.c", "C:/Users/roxan/Desktop/Proiect lentile/ESP32/Backend/main/main.c" ],
             "include_dirs": [ ".", "tasks/tasks/leds", "tasks/tasks/sensors/reed", "tasks/tasks/sensors/button", "tasks/tasks/alarm", "system/alarm_queue", "wifi", "system", "ntp", "communication/http_server", "communication/http_client", "events" ]
         },
         "mbedtls": {

@@ -1,0 +1,1 @@
+void alarm_scheduler_start(void);

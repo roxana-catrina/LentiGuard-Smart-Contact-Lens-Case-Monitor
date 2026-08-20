@@ -11,6 +11,7 @@
 #include "system/system_state.h"
 #include "wifi/wifi.h"
 #include "communication/http_client/http_client.h"
+#include "alarm_scheduler.h"
 
 
 void app_main(void)
@@ -27,7 +28,7 @@ void app_main(void)
      reed_task_start();
     buzzer_task_start();
     button_buzzer_task_start();
-
+   alarm_scheduler_start();
    
 
      
