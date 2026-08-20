@@ -9,34 +9,41 @@
 #include "ntp.h"
 #include "communication/http_client/http_client.h"
 
-static int alarm_hour = 0;
-static int alarm_minute = 0;
-static bool alarm_enabled = false;
+#define MAX_ALARMS 10
+
+static alarm_t alarms[MAX_ALARMS];
+static int alarm_count = 0;
 
 static void alarm_scheduler_task(void *pvParameters)
 {
-    int last_triggered_hour = -1;
-    int last_triggered_minute = -1;
-
     /*
-     * Prima citire a alarmei.
+     * Prima citire a alarmelor din backend.
      */
-    if (http_client_get_alarm(
-            &alarm_hour,
-            &alarm_minute,
-            &alarm_enabled))
+    if (http_client_get_alarms(
+            alarms,
+            MAX_ALARMS,
+            &alarm_count))
     {
         printf(
-            "SCHEDULER ALARM: %02d:%02d enabled=%d\n",
-            alarm_hour,
-            alarm_minute,
-            alarm_enabled
+            "ALARMS LOADED: %d\n",
+            alarm_count
         );
     }
     else
     {
-        printf("FAILED TO GET ALARM\n");
+        printf(
+            "FAILED TO GET ALARMS\n"
+        );
     }
+
+    /*
+     * Pentru fiecare alarmă memorăm dacă
+     * a fost deja declanșată în minutul respectiv.
+     *
+     * 0 = nu a fost declanșată
+     * 1 = a fost declanșată
+     */
+    bool triggered[MAX_ALARMS] = {false};
 
     int refresh_counter = 0;
 
@@ -48,41 +55,67 @@ static void alarm_scheduler_task(void *pvParameters)
 
         /*
          * =========================
-         * REFRESH ALARM
+         * REFRESH ALARMS
          * =========================
          *
-         * Facem GET la fiecare 30 secunde.
+         * Luăm lista nouă din backend
+         * la fiecare 30 secunde.
          */
         if (refresh_counter >= 30)
         {
-            int new_hour;
-            int new_minute;
-            bool new_enabled;
+            int new_alarm_count = 0;
 
             printf(
-                "REFRESHING ALARM FROM BACKEND\n"
+                "REFRESHING ALARMS FROM BACKEND\n"
             );
 
-            if (http_client_get_alarm(
-                    &new_hour,
-                    &new_minute,
-                    &new_enabled))
+            if (http_client_get_alarms(
+                    alarms,
+                    MAX_ALARMS,
+                    &new_alarm_count))
             {
-                alarm_hour = new_hour;
-                alarm_minute = new_minute;
-                alarm_enabled = new_enabled;
+                alarm_count =
+                    new_alarm_count;
 
                 printf(
-                    "UPDATED ALARM: %02d:%02d enabled=%d\n",
-                    alarm_hour,
-                    alarm_minute,
-                    alarm_enabled
+                    "UPDATED ALARMS: %d\n",
+                    alarm_count
                 );
+
+                /*
+                 * Resetăm starea de trigger
+                 * pentru alarmele existente.
+                 */
+                for (int i = 0;
+                     i < MAX_ALARMS;
+                     i++)
+                {
+                    triggered[i] = false;
+                }
+
+                /*
+                 * Afișăm toate alarmele.
+                 */
+                for (int i = 0;
+                     i < alarm_count;
+                     i++)
+                {
+                    printf(
+                        "ALARM[%d]: id=%d "
+                        "%02d:%02d enabled=%d\n",
+
+                        i,
+                        alarms[i].id,
+                        alarms[i].hour,
+                        alarms[i].minute,
+                        alarms[i].enabled
+                    );
+                }
             }
             else
             {
                 printf(
-                    "FAILED TO REFRESH ALARM\n"
+                    "FAILED TO REFRESH ALARMS\n"
                 );
             }
 
@@ -109,53 +142,89 @@ static void alarm_scheduler_task(void *pvParameters)
 
             /*
              * =========================
-             * ALARM CHECK
+             * CHECK ALL ALARMS
              * =========================
              */
 
-            if (alarm_enabled &&
-                current_hour == alarm_hour &&
-                current_minute == alarm_minute)
+            for (int i = 0;
+                 i < alarm_count;
+                 i++)
             {
                 /*
-                 * Pornim alarma o singură dată
-                 * în minutul respectiv.
+                 * Ignorăm alarma dacă
+                 * este dezactivată.
                  */
-                if (last_triggered_hour != current_hour ||
-                    last_triggered_minute != current_minute)
+                if (!alarms[i].enabled)
                 {
-                    printf(
-                        "ALARM TIME REACHED!\n"
-                    );
+                    continue;
+                }
 
-                    printf(
-                        "Sending ALARM_START\n"
-                    );
-
-                    alarm_command_t command =
-                        ALARM_START;
-
-                    if (xQueueSend(
-                            alarm_queue,
-                            &command,
-                            portMAX_DELAY) == pdTRUE)
+                /*
+                 * Verificăm ora și minutul.
+                 */
+                if (current_hour ==
+                        alarms[i].hour &&
+                    current_minute ==
+                        alarms[i].minute)
+                {
+                    /*
+                     * Nu declanșăm aceeași alarmă
+                     * de mai multe ori în același minut.
+                     */
+                    if (!triggered[i])
                     {
                         printf(
-                            "ALARM_START SENT TO QUEUE\n"
+                            "ALARM TIME REACHED!\n"
                         );
-                    }
-                    else
-                    {
+
                         printf(
-                            "FAILED TO SEND ALARM_START\n"
+                            "ALARM ID: %d\n",
+                            alarms[i].id
                         );
+
+                        printf(
+                            "ALARM TIME: %02d:%02d\n",
+                            alarms[i].hour,
+                            alarms[i].minute
+                        );
+
+                        /*
+                         * Construim mesajul pentru queue.
+                         */
+                        alarm_message_t message = {
+                            .command = ALARM_START,
+                            .alarm_id = alarms[i].id
+                        };
+
+                        /*
+                         * Trimitem alarma către
+                         * buzzer_task.
+                         */
+                        if (xQueueSend(
+                                alarm_queue,
+                                &message,
+                                portMAX_DELAY)
+                                == pdTRUE)
+                        {
+                            printf(
+                                "ALARM_START SENT TO QUEUE\n"
+                            );
+
+                            printf(
+                                "ALARM ID SENT: %d\n",
+                                message.alarm_id
+                            );
+                        }
+                        else
+                        {
+                            printf(
+                                "FAILED TO SEND "
+                                "ALARM_START\n"
+                            );
+                        }
+
+                        triggered[i] = true;
                     }
-
-                    last_triggered_hour =
-                        current_hour;
-
-                    last_triggered_minute =
-                        current_minute;
                 }
             }
         }

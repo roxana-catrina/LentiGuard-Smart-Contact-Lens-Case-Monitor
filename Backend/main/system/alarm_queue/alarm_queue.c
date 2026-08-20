@@ -3,11 +3,10 @@
 
 QueueHandle_t alarm_queue;
 
-
 void alarm_queue_init(void)
 {
     alarm_queue = xQueueCreate(
         5,
-        sizeof(alarm_command_t)
+        sizeof(alarm_message_t)
     );
 }

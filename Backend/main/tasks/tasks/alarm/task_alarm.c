@@ -30,32 +30,70 @@ void buzzer_gpio_init(void)
 
 static void buzzer_task(void *pvParameters)
 {
-    alarm_command_t command;
     event_t event;
-    event.device_id = 1; 
-    command= ALARM_START;
+    event.device_id = 1;
+
+    alarm_message_t message;
 
     while (1)
     {
-        if (xQueueReceive(alarm_queue, &command, portMAX_DELAY) == pdTRUE)
+        if (xQueueReceive(
+                alarm_queue,
+                &message,
+                portMAX_DELAY) == pdTRUE)
         {
-               printf("Command received: %d\n", command);
-            if (command == ALARM_START)
-            {     printf("Command received: %d\n", command);
+            printf(
+                "Command received: %d, alarm ID: %d\n",
+                message.command,
+                message.alarm_id
+            );
+
+            if (message.command == ALARM_START)
+            {
+                printf(
+                    "ALARM_START, ID: %d\n",
+                    message.alarm_id
+                );
+
+                // Pornim buzzerul
                 gpio_set_level(BUZZER_GPIO, 1);
+
+                // Trimitem evenimentul către backend
                 event.event_type = ALARM_STARTED;
+
                 http_client_send_alarm_event(&event);
+
+                // Ștergem alarma care tocmai a sunat
+                if (http_client_delete_alarm(message.alarm_id))
+                {
+                    printf(
+                        "Alarm %d deleted successfully\n",
+                        message.alarm_id
+                    );
+                }
+                else
+                {
+                    printf(
+                        "Failed to delete alarm %d\n",
+                        message.alarm_id
+                    );
+                }
             }
-            else if (command == ALARM_STOP)
-            {   printf("ALARM_STOP\n");
+            else if (message.command == ALARM_STOP)
+            {
+                printf("ALARM_STOP\n");
+
+                // Oprim buzzerul
                 gpio_set_level(BUZZER_GPIO, 0);
+
+                // Trimitem evenimentul către backend
                 event.event_type = ALARM_STOPPED_DEVICE;
+
                 http_client_send_alarm_event(&event);
             }
         }
     }
 }
-
 void buzzer_task_start(void)
 {
     xTaskCreate(

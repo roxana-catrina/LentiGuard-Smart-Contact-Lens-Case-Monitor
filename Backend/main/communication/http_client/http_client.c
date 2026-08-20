@@ -240,28 +240,22 @@ static esp_err_t alarm_http_event_handler(
     return ESP_OK;
 }
 
-
-bool http_client_get_alarm(
-    int *hour,
-    int *minute,
-    bool *enabled
+bool http_client_get_alarms(
+    alarm_t alarms[],
+    int max_alarms,
+    int *alarm_count
 )
 {
-    char response[256] = {0};
+    char response[1024] = {0};
 
-    /*
-     * Structura în care vom salva
-     * răspunsul primit de la backend.
-     */
+    *alarm_count = 0;
+
     alarm_response_t alarm_response = {
         .buffer = response,
         .buffer_size = sizeof(response),
         .data_len = 0
     };
 
-    /*
-     * Configurarea clientului HTTP.
-     */
     esp_http_client_config_t config = {
         .url = "http://192.168.1.128:8080/api/alarm/1",
         .event_handler = alarm_http_event_handler,
@@ -273,53 +267,33 @@ bool http_client_get_alarm(
 
     if (client == NULL)
     {
-        printf(
-            "Failed to create HTTP client\n"
-        );
-
+        printf("Failed to create HTTP client\n");
         return false;
     }
 
-    /*
-     * GET request.
-     */
     esp_http_client_set_method(
         client,
         HTTP_METHOD_GET
     );
 
-    printf(
-        "GETTING ALARM FROM BACKEND\n"
-    );
+    printf("GETTING ALARMS FROM BACKEND\n");
 
-    /*
-     * Trimitem request-ul.
-     *
-     * Răspunsul va fi primit prin
-     * alarm_http_event_handler().
-     */
     esp_err_t err =
         esp_http_client_perform(client);
 
     if (err != ESP_OK)
     {
         printf(
-            "GET ALARM ERROR: %s\n",
+            "GET ALARMS ERROR: %s\n",
             esp_err_to_name(err)
         );
 
         esp_http_client_cleanup(client);
-
         return false;
     }
 
-    /*
-     * Verificăm statusul HTTP.
-     */
     int status =
-        esp_http_client_get_status_code(
-            client
-        );
+        esp_http_client_get_status_code(client);
 
     printf(
         "ALARM RESPONSE STATUS: %d\n",
@@ -328,18 +302,12 @@ bool http_client_get_alarm(
 
     if (status != 200)
     {
-        printf(
-            "Unexpected HTTP status\n"
-        );
+        printf("Unexpected HTTP status\n");
 
         esp_http_client_cleanup(client);
-
         return false;
     }
 
-    /*
-     * Afișăm ce am primit.
-     */
     printf(
         "ALARM RESPONSE LENGTH: %d\n",
         alarm_response.data_len
@@ -352,21 +320,15 @@ bool http_client_get_alarm(
 
     esp_http_client_cleanup(client);
 
-    /*
-     * Verificăm dacă am primit efectiv body-ul.
-     */
     if (alarm_response.data_len == 0)
     {
-        printf(
-            "Alarm response is empty\n"
-        );
-
+        printf("Alarm response is empty\n");
         return false;
     }
 
     /*
      * =========================
-     * PARSE JSON
+     * PARSE JSON ARRAY
      * =========================
      */
 
@@ -376,114 +338,201 @@ bool http_client_get_alarm(
     if (root == NULL)
     {
         printf(
-            "Failed to parse alarm JSON\n"
+            "Failed to parse alarms JSON\n"
         );
 
         return false;
     }
 
-    /*
-     * Obținem alarmTime.
-     *
-     * Exemplu:
-     *
-     * "alarmTime": "11:30:00"
-     */
-    cJSON *alarmTime =
-        cJSON_GetObjectItem(
-            root,
-            "alarmTime"
-        );
-
-    /*
-     * Obținem enabled.
-     *
-     * Exemplu:
-     *
-     * "enabled": true
-     */
-    cJSON *enabledJson =
-        cJSON_GetObjectItem(
-            root,
-            "enabled"
-        );
-
-    /*
-     * Verificăm tipurile JSON.
-     */
-    if (!cJSON_IsString(alarmTime) ||
-        !cJSON_IsBool(enabledJson))
+    if (!cJSON_IsArray(root))
     {
         printf(
-            "Invalid alarm JSON\n"
+            "Alarm response is not an array\n"
         );
 
         cJSON_Delete(root);
-
         return false;
     }
 
-    printf(
-        "ALARM TIME: %s\n",
-        alarmTime->valuestring
-    );
+    int array_size =
+        cJSON_GetArraySize(root);
 
     printf(
-        "ALARM ENABLED: %s\n",
-        cJSON_IsTrue(enabledJson)
-            ? "true"
-            : "false"
+        "NUMBER OF ALARMS: %d\n",
+        array_size
     );
 
-    /*
-     * =========================
-     * PARSE TIME
-     * =========================
-     *
-     * Backend:
-     *
-     * 11:30:00
-     *
-     * Noi extragem:
-     *
-     * hour   = 11
-     * minute = 30
-     */
-
-    if (sscanf(
-            alarmTime->valuestring,
-            "%d:%d",
-            hour,
-            minute
-        ) != 2)
+    for (int i = 0;
+         i < array_size && *alarm_count < max_alarms;
+         i++)
     {
+        cJSON *alarm_json =
+            cJSON_GetArrayItem(root, i);
+
+        if (!cJSON_IsObject(alarm_json))
+        {
+            continue;
+        }
+
+        cJSON *id =
+            cJSON_GetObjectItem(
+                alarm_json,
+                "id"
+            );
+
+        cJSON *alarmTime =
+            cJSON_GetObjectItem(
+                alarm_json,
+                "alarmTime"
+            );
+
+        cJSON *enabledJson =
+            cJSON_GetObjectItem(
+                alarm_json,
+                "enabled"
+            );
+
+        if (!cJSON_IsNumber(id) ||
+            !cJSON_IsString(alarmTime) ||
+            !cJSON_IsBool(enabledJson))
+        {
+            printf(
+                "Invalid alarm at index %d\n",
+                i
+            );
+
+            continue;
+        }
+
+        int hour;
+        int minute;
+
+        if (sscanf(
+                alarmTime->valuestring,
+                "%d:%d",
+                &hour,
+                &minute
+            ) != 2)
+        {
+            printf(
+                "Invalid alarm time: %s\n",
+                alarmTime->valuestring
+            );
+
+            continue;
+        }
+
+        alarms[*alarm_count].id =
+            id->valueint;
+
+        alarms[*alarm_count].hour =
+            hour;
+
+        alarms[*alarm_count].minute =
+            minute;
+
+        alarms[*alarm_count].enabled =
+            cJSON_IsTrue(enabledJson);
+
         printf(
-            "Invalid alarm time: %s\n",
-            alarmTime->valuestring
+            "ALARM %d: id=%d time=%02d:%02d enabled=%d\n",
+            *alarm_count,
+            alarms[*alarm_count].id,
+            alarms[*alarm_count].hour,
+            alarms[*alarm_count].minute,
+            alarms[*alarm_count].enabled
         );
 
-        cJSON_Delete(root);
-
-        return false;
+        (*alarm_count)++;
     }
 
-    /*
-     * Salvăm enabled.
-     */
-    *enabled =
-        cJSON_IsTrue(enabledJson);
-
-    printf(
-        "PARSED ALARM: %02d:%02d enabled=%d\n",
-        *hour,
-        *minute,
-        *enabled
-    );
-
-    /*
-     * Eliberăm JSON-ul.
-     */
     cJSON_Delete(root);
 
+    printf(
+        "TOTAL ALARMS LOADED: %d\n",
+        *alarm_count
+    );
+
     return true;
+}
+
+
+bool http_client_delete_alarm(int alarm_id)
+{
+    char url[128];
+
+    snprintf(
+        url,
+        sizeof(url),
+        "http://192.168.1.128:8080/api/alarm/%d",
+        alarm_id
+    );
+
+    printf(
+        "DELETING ALARM ID: %d\n",
+        alarm_id
+    );
+
+    esp_http_client_config_t config = {
+        .url = url
+    };
+
+    esp_http_client_handle_t client =
+        esp_http_client_init(&config);
+
+    if (client == NULL)
+    {
+        printf(
+            "FAILED TO CREATE DELETE CLIENT\n"
+        );
+
+        return false;
+    }
+
+    esp_http_client_set_method(
+        client,
+        HTTP_METHOD_DELETE
+    );
+
+    esp_err_t err =
+        esp_http_client_perform(client);
+
+    if (err != ESP_OK)
+    {
+        printf(
+            "DELETE ALARM ERROR: %s\n",
+            esp_err_to_name(err)
+        );
+
+        esp_http_client_cleanup(client);
+
+        return false;
+    }
+
+    int status =
+        esp_http_client_get_status_code(client);
+
+    printf(
+        "DELETE ALARM STATUS: %d\n",
+        status
+    );
+
+    esp_http_client_cleanup(client);
+
+    if (status >= 200 && status < 300)
+    {
+        printf(
+            "ALARM ID %d DELETED\n",
+            alarm_id
+        );
+
+        return true;
+    }
+
+    printf(
+        "FAILED TO DELETE ALARM ID %d\n",
+        alarm_id
+    );
+
+    return false;
 }

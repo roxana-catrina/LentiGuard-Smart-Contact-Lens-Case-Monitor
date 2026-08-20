@@ -1,8 +1,9 @@
 package com.lentiguard.backend.service;
-
 import com.lentiguard.backend.entity.ScheduledAlarm;
 import com.lentiguard.backend.repository.ScheduledAlarmRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ScheduledAlarmService {
@@ -19,9 +20,12 @@ public class ScheduledAlarmService {
         return scheduledAlarmRepository.save(alarm);
     }
 
-    public ScheduledAlarm getAlarm(Integer deviceId) {
+    public List<ScheduledAlarm> getAlarms(Integer deviceId) {
         return scheduledAlarmRepository
-                .findByDeviceId(deviceId)
-                .orElse(null);
+                .findByDeviceId(deviceId);
+    }
+
+    public void deleteAlarm(Long alarmId) {
+        scheduledAlarmRepository.deleteById(alarmId);
     }
 }
